@@ -1,0 +1,25 @@
+#  Run this image on Mac ARM (M1...M4 processors)
+#
+# The standard images "selenium/hub" and "selenium/node-chrome" don't work on Mac ARM,
+# so we need to run a special "seleniarm" image.
+# But its latest version is only 124... :(
+services:
+  chrome:
+    image: seleniarm/standalone-chromium:124.0
+    shm_size: 2gb
+    ports:
+      - "4444:4444"
+      - "4443:4443"
+      - "4442:4442"
+    environment:
+      - SE_NODE_GRID_URL=http://localhost:4444
+      - SE_VNC_NO_PASSWORD=1
+      - SE_NODE_MAX_SESSIONS=5
+      - SE_NODE_MAX_INSTANCES=5
+      - SE_OPTS=--enable-managed-downloads true --selenium-manager true --log-level FINE
+      - SE_ENABLE_TRACING=false
+      - JAVA_OPTS=-Djava.net.preferIPv4Stack=true
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
